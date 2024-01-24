@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LoginBg, Logo } from '../assets'
 import { LoginInput } from '../components'
 import { FaEnvelope, FaLock, FcGoogle } from '../assets/icons'
@@ -9,6 +9,9 @@ import {useNavigate} from 'react-router-dom'
 import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
 import {app} from '../config/firebase.config'
 import { validateUserJwtToken } from '../api'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserDetails } from '../context/actions/userActions'
+import { alertInfo, alertWarning } from '../context/actions/alertAction'
 
 const Login = () => {
 
@@ -20,15 +23,27 @@ const Login = () => {
   const firebaseAuth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user);
+  const alert = useSelector((state) => state.alert);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/", {replace : true});
+    }
+  }, [user]);
+
   const loginWithGoogle = async () =>{
     await signInWithPopup(firebaseAuth,provider).then(userCred=>{
       firebaseAuth.onAuthStateChanged(cred=>{
         if (cred){
           cred.getIdToken().then((token)=>{
             validateUserJwtToken(token).then(data => {
-              console.log(data);
+              dispatch(setUserDetails(data));
             });
+            navigate("/", {replace: true});
           });
         }
       });
@@ -37,17 +52,18 @@ const Login = () => {
 
   const signUpWithEmailPass = async ()=>{
     if(userEmail==='' || password==='' || confirm_password===''){
+      dispatch(alertInfo("Required field should not be empty"));
     }else{
       if(password===confirm_password){
         setUserEmail("")
         setPassword("")
         setConfirm_password("")
         await createUserWithEmailAndPassword(firebaseAuth, userEmail, password).then(userCred=>{
-          firebaseAuth.onAuthStateChanged(cred=>{
+          firebaseAuth.onAuthStateChanged((cred)=>{
             if (cred){
               cred.getIdToken().then((token)=>{
-                validateUserJwtToken(token).then(data => {
-                  console.log(data);
+                validateUserJwtToken(token).then((data) => {
+                  dispatch(setUserDetails(data));
                 })
                 navigate("/", {replace: true});
               });
@@ -55,7 +71,7 @@ const Login = () => {
           });
         })
       }else{
-
+        dispatch(alertWarning("Password doesn't match"));
       }
     }
   };
@@ -67,7 +83,7 @@ const Login = () => {
           if (cred){
             cred.getIdToken().then((token)=>{
               validateUserJwtToken(token).then(data => {
-                console.log(data);
+                dispatch(setUserDetails(data));
               })
               navigate("/", {replace: true});
             });
@@ -75,7 +91,7 @@ const Login = () => {
         });
       })
     }else{
-      // alert message
+      dispatch(alertWarning("Password doesn't match"));
     }
   }
   return <div className='w-screen h-screen relative overflow-hidden flex'>

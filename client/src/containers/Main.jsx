@@ -1,8 +1,11 @@
 import React from 'react'
+import Header from '../components/Header'
 
 const Main = () => {
   return (
-    <div>Main</div>
+    <main className='w-screen min-h-screen flex items-center justify-center bg-primary'>
+      <Header/>
+    </main>
   )
 }
 

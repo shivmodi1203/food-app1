@@ -6,7 +6,7 @@ import {
     FaArrowLeft,
 }from "react-icons/fa";
 
-import {FcGoogle, FcClearFilters} from "react-icons/fc";
+import {FcGoogle, FcClearFilters,} from "react-icons/fc";
 import {MdShoppingCart, MdLogout, MdSearch, MdDelete} from "react-icons/md";
 
 import{ 
