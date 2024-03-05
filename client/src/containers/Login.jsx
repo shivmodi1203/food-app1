@@ -103,7 +103,7 @@ const Login = () => {
       w-[80%] md:w-508 h-full z-10 backdrop-blur-md p-4 px-4 py-12 gap-6'>
         <div className='flex items-center justify-start gap-4 w-full'>
             <img src={Logo} className='w-8' alt="" />
-            <p className='text-headingColor font-semibold text-2xl'>City</p>
+            <p className='text-headingColor font-semibold text-2xl'>Khana Khazana</p>
         </div>
         <p className='text-headingColor font-semibold text-3xl'>Welcome Back</p>
         <p className='text-textColor text-xl  -mt-6'>{isSignUp? "Sign Up": "Sign In"} with following</p>
